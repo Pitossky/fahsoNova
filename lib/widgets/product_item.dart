@@ -28,7 +28,7 @@ class ProductItem extends StatelessWidget {
             builder: (context, prodMod, _) => IconButton(
               icon: Icon(
                 prodMod.isFav ? Icons.favorite : Icons.favorite_border,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).errorColor,
               ),
               onPressed: () {
                 prodMod.changeFavourite();
@@ -37,15 +37,28 @@ class ProductItem extends StatelessWidget {
             ),
           ),
           trailing: IconButton(
-            icon: const Icon(Icons.shopping_cart),
+            icon: const Icon(Icons.shopping_cart_outlined),
             onPressed: () {
               cartMod.addCartItem(
-                prodMod.prodId,
+                prodMod.prodId.toString(),
                 prodMod.prodPrice,
                 prodMod.prodTitle,
               );
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text('Your Item has been added to cart!'),
+                  duration: const Duration(seconds: 2),
+                  action: SnackBarAction(
+                    label: 'UNDO',
+                    onPressed: () {
+                      cartMod.removeSingleCartItem(prodMod.prodId.toString());
+                    },
+                  ),
+                ),
+              );
             },
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColorLight,
           ),
           backgroundColor: Colors.black87,
           title: Text(

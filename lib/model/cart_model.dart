@@ -15,7 +15,7 @@ class CartItemModel {
 }
 
 class CartProvider with ChangeNotifier {
-  final Map<String, CartItemModel> _cartItem = {};
+  Map<String, CartItemModel> _cartItem = {};
 
   Map<String, CartItemModel> get cartItem {
     return {..._cartItem};
@@ -34,26 +34,55 @@ class CartProvider with ChangeNotifier {
   }
 
   void addCartItem(String prodId, double prodPrice, String prodTitle) {
-    if(_cartItem.containsKey(prodId)) {
-      _cartItem.update(prodId, (value) => CartItemModel(
-          cartItemId: value.cartItemId,
-          cartItemTitle: value.cartItemTitle,
-          cartItemQty: value.cartItemQty + 1,
-          cartItemPrice: value.cartItemPrice,
-      ));
+    if (_cartItem.containsKey(prodId)) {
+      _cartItem.update(
+          prodId,
+          (value) => CartItemModel(
+                cartItemId: value.cartItemId,
+                cartItemTitle: value.cartItemTitle,
+                cartItemQty: value.cartItemQty + 1,
+                cartItemPrice: value.cartItemPrice,
+              ));
     } else {
-      _cartItem.putIfAbsent(prodId, () => CartItemModel(
-          cartItemId: DateTime.now().toString(),
-          cartItemTitle: prodTitle,
-          cartItemQty: 1,
-          cartItemPrice: prodPrice,
-      ));
+      _cartItem.putIfAbsent(
+          prodId,
+          () => CartItemModel(
+                cartItemId: DateTime.now().toString(),
+                cartItemTitle: prodTitle,
+                cartItemQty: 1,
+                cartItemPrice: prodPrice,
+              ));
     }
     notifyListeners();
   }
 
   void removeCartItem(String prodId) {
     _cartItem.remove(prodId);
+    notifyListeners();
+  }
+
+  void removeSingleCartItem(String prodId) {
+    if (!_cartItem.containsKey(prodId)) {
+      return;
+    }
+    if (_cartItem[prodId]!.cartItemQty > 1) {
+      _cartItem.update(
+        prodId,
+        (currCartItem) => CartItemModel(
+          cartItemId: currCartItem.cartItemId,
+          cartItemTitle: currCartItem.cartItemTitle,
+          cartItemQty: currCartItem.cartItemQty - 1,
+          cartItemPrice: currCartItem.cartItemPrice,
+        ),
+      );
+    } else {
+      _cartItem.remove(prodId);
+    }
+    notifyListeners();
+  }
+
+  void clearCart() {
+    _cartItem = {};
     notifyListeners();
   }
 }

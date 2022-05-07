@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pappi_store/model/cart_model.dart';
+import 'package:pappi_store/model/order_model.dart';
 import 'package:pappi_store/widgets/cart_items.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class CartScreen extends StatelessWidget {
                   const Spacer(),
                   Chip(
                     label: Text(
-                      '\$${cartAmt.totalCartAmt}',
+                      '\$${cartAmt.totalCartAmt.toStringAsFixed(2)}',
                       style: TextStyle(
                         color: Theme.of(context)
                             .primaryTextTheme
@@ -45,11 +46,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  FlatButton(
-                    onPressed: () {},
-                    child: Text('ORDER NOW'),
-                    textColor: Theme.of(context).primaryColor,
-                  ),
+                  OrderButton(cartAmt: cartAmt),
                 ],
               ),
             ),
@@ -72,6 +69,47 @@ class CartScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key? key,
+    required this.cartAmt,
+  }) : super(key: key);
+
+  final CartProvider cartAmt;
+
+  @override
+  State<OrderButton> createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var loadData = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: (widget.cartAmt.totalCartAmt <= 0 || loadData)
+          ? null
+          : () async {
+              setState(() {
+                loadData = true;
+              });
+              await Provider.of<OrderProvider>(context, listen: false).addOrder(
+                widget.cartAmt.cartItem.values.toList(),
+                widget.cartAmt.totalCartAmt,
+              );
+              setState(() {
+                loadData = true;
+              });
+              widget.cartAmt.clearCart();
+            },
+      child: loadData
+          ? const CircularProgressIndicator()
+          : const Text('ORDER NOW'),
+      textColor: Theme.of(context).primaryColor,
     );
   }
 }
