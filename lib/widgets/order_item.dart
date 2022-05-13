@@ -27,7 +27,7 @@ class _OrderItemState extends State<OrderItem> {
           ListTile(
             title: Text('\$${widget.ordData.orderAmt}'),
             subtitle: Text(
-              DateFormat('dd/MM/yyyy').format(widget.ordData.timeOfOrder),
+              DateFormat('dd/MM/yyyy').format(widget.ordData.timeOfOrder!),
             ),
             trailing: IconButton(
               icon: Icon(
@@ -44,11 +44,11 @@ class _OrderItemState extends State<OrderItem> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               height: min(
-                widget.ordData.prodOrdered.length * 20.0 + 30,
+                widget.ordData.prodOrdered!.length * 20.0 + 30,
                 180,
               ),
               child: ListView(
-                children: widget.ordData.prodOrdered
+                children: widget.ordData.prodOrdered!
                     .map((e) => Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

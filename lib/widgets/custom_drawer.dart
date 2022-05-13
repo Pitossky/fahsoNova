@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:pappi_store/model/provider/auth_provider.dart';
 import 'package:pappi_store/screens/orders_screen.dart';
 
 import '../screens/user_prod_screen.dart';
@@ -35,6 +37,16 @@ class CustomDrawer extends StatelessWidget {
             onTap: () => Navigator.of(context)
                 .pushReplacementNamed(UserProductScreen.routeName),
           ),
+          const Divider(),
+          ListTile(
+              leading: const Icon(Icons.exit_to_app),
+              title: const Text('Log out'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.of(context).pushReplacementNamed('/');
+                Provider.of<AuthenticationProvider>(context, listen: false)
+                    .logout();
+              }),
         ],
       ),
     );

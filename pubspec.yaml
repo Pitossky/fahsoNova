@@ -37,7 +37,7 @@ dependencies:
   provider:
   intl:
   http:
-
+  shared_preferences:
 
 
 dev_dependencies:

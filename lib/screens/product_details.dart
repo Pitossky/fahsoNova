@@ -19,7 +19,7 @@ class ProductDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(loadedProd.prodTitle),
+        title: Text(loadedProd.prodTitle.toString()),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -28,7 +28,7 @@ class ProductDetailsScreen extends StatelessWidget {
               height: 300,
               width: MediaQuery.of(context).size.width,
               child: Image.network(
-                loadedProd.prodImage,
+                loadedProd.prodImage.toString(),
                 fit: BoxFit.cover,
               ),
             ),
@@ -41,7 +41,7 @@ class ProductDetailsScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Text(
-                loadedProd.prodDesc,
+                loadedProd.prodDesc.toString(),
                 softWrap: true,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge,

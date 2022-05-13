@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pappi_store/model/cart_model.dart';
-import 'package:pappi_store/model/order_model.dart';
-import 'package:pappi_store/widgets/cart_items.dart';
 import 'package:provider/provider.dart';
+import 'package:pappi_store/widgets/cart_items.dart';
+
+import '../model/provider/cart_provider.dart';
+import '../model/provider/order_provider.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart_screen';
@@ -102,7 +103,7 @@ class _OrderButtonState extends State<OrderButton> {
                 widget.cartAmt.totalCartAmt,
               );
               setState(() {
-                loadData = true;
+                loadData = false;
               });
               widget.cartAmt.clearCart();
             },

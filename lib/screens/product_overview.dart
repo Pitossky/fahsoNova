@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pappi_store/model/provider/product_provider.dart';
 import 'package:pappi_store/screens/cart_screen.dart';
 import 'package:pappi_store/widgets/badge.dart';
 import 'package:pappi_store/widgets/custom_drawer.dart';
-import 'package:provider/provider.dart';
-import '../model/cart_model.dart';
+import '../model/provider/cart_provider.dart';
 import '../widgets/product_gridview.dart';
 
 enum TabOptions { favourites, all }
 
 class ProductOverview extends StatefulWidget {
-  ProductOverview({Key? key}) : super(key: key);
+  const ProductOverview({Key? key}) : super(key: key);
 
   @override
   State<ProductOverview> createState() => _ProductOverviewState();
@@ -41,7 +41,7 @@ class _ProductOverviewState extends State<ProductOverview> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pappi Store'),
+        title: const Text('FashoNova'),
         actions: [
           PopupMenuButton(
             onSelected: (TabOptions value) {

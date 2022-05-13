@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pappi_store/model/cart_model.dart';
+import 'package:pappi_store/model/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:pappi_store/model/product_model.dart';
 import 'package:pappi_store/screens/product_details.dart';
-import 'package:provider/provider.dart';
+
+import '../model/provider/cart_provider.dart';
 
 class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final prodMod = Provider.of<ProductModel>(context, listen: false);
     final cartMod = Provider.of<CartProvider>(context, listen: false);
+    final authMod = Provider.of<AuthenticationProvider>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -19,7 +22,7 @@ class ProductItem extends StatelessWidget {
             arguments: prodMod.prodId,
           ),
           child: Image.network(
-            prodMod.prodImage,
+            prodMod.prodImage.toString(),
             fit: BoxFit.cover,
           ),
         ),
@@ -27,11 +30,14 @@ class ProductItem extends StatelessWidget {
           leading: Consumer<ProductModel>(
             builder: (context, prodMod, _) => IconButton(
               icon: Icon(
-                prodMod.isFav ? Icons.favorite : Icons.favorite_border,
+                prodMod.isFav! ? Icons.favorite : Icons.favorite_border,
                 color: Theme.of(context).errorColor,
               ),
               onPressed: () {
-                prodMod.changeFavourite();
+                prodMod.changeFavourite(
+                  authMod.token.toString(),
+                  authMod.userId,
+                );
               },
               //color: Theme.of(context).accentColor,
             ),
@@ -41,8 +47,8 @@ class ProductItem extends StatelessWidget {
             onPressed: () {
               cartMod.addCartItem(
                 prodMod.prodId.toString(),
-                prodMod.prodPrice,
-                prodMod.prodTitle,
+                prodMod.prodPrice as double,
+                prodMod.prodTitle.toString(),
               );
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -62,7 +68,7 @@ class ProductItem extends StatelessWidget {
           ),
           backgroundColor: Colors.black87,
           title: Text(
-            prodMod.prodTitle,
+            prodMod.prodTitle.toString(),
             textAlign: TextAlign.center,
           ),
         ),

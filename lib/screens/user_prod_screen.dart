@@ -11,12 +11,13 @@ class UserProductScreen extends StatelessWidget {
   const UserProductScreen({Key? key}) : super(key: key);
 
   Future<void> _refreshProducts(BuildContext context) async {
-    await Provider.of<ProductProvider>(context, listen: false).fetchProducts();
+    await Provider.of<ProductProvider>(context, listen: false)
+        .fetchProducts(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final prodInfo = Provider.of<ProductProvider>(context);
+    //final prodInfo = Provider.of<ProductProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -33,24 +34,37 @@ class UserProductScreen extends StatelessWidget {
         ],
       ),
       drawer: const CustomDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () => _refreshProducts(context),
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: ListView.builder(
-            itemBuilder: (_, i) => Column(
-              children: [
-                UserProductItem(
-                  userProdId: prodInfo.productList[i].prodId,
-                  userProdTitle: prodInfo.productList[i].prodTitle,
-                  userImgUrl: prodInfo.productList[i].prodImage,
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (ctx, snap) => snap.connectionState == ConnectionState.waiting
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : RefreshIndicator(
+                onRefresh: () => _refreshProducts(context),
+                child: Consumer<ProductProvider>(
+                  builder: (context, prodInfo, _) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: ListView.builder(
+                        itemBuilder: (_, i) => Column(
+                          children: [
+                            UserProductItem(
+                              userProdId: prodInfo.productList[i].prodId,
+                              userProdTitle:
+                                  prodInfo.productList[i].prodTitle.toString(),
+                              userImgUrl:
+                                  prodInfo.productList[i].prodImage.toString(),
+                            ),
+                            const Divider(),
+                          ],
+                        ),
+                        itemCount: prodInfo.productList.length,
+                      ),
+                    );
+                  },
                 ),
-                const Divider(),
-              ],
-            ),
-            itemCount: prodInfo.productList.length,
-          ),
-        ),
+              ),
       ),
     );
   }

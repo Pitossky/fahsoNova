@@ -50,12 +50,12 @@ class _ManageProductScreenState extends State<ManageProductScreen> {
         _editableProducts = Provider.of<ProductProvider>(context, listen: false)
             .findById(editedProdId);
         _initialProdValues = {
-          'title': _editableProducts.prodTitle,
-          'description': _editableProducts.prodDesc,
+          'title': _editableProducts.prodTitle.toString(),
+          'description': _editableProducts.prodDesc.toString(),
           'price': _editableProducts.prodPrice.toString(),
           'imageUrl': '',
         };
-        _imgController.text = _editableProducts.prodImage;
+        _imgController.text = _editableProducts.prodImage.toString();
       }
     }
     _isInit = false;
