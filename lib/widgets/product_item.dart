@@ -21,9 +21,17 @@ class ProductItem extends StatelessWidget {
             ProductDetailsScreen.routeName,
             arguments: prodMod.prodId,
           ),
-          child: Image.network(
-            prodMod.prodImage.toString(),
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: prodMod.prodId as Object,
+            child: FadeInImage(
+              placeholder: const AssetImage(
+                'assets/images/product-placeholder.png',
+              ),
+              image: NetworkImage(
+                prodMod.prodImage.toString(),
+              ),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         footer: GridTileBar(

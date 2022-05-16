@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pappi_store/helpers/custom_route.dart';
 import 'package:provider/provider.dart';
 import 'package:pappi_store/model/provider/auth_provider.dart';
 import 'package:pappi_store/screens/splash_screen.dart';
@@ -65,6 +66,12 @@ class MyApp extends StatelessWidget {
               primaryColorLight: Colors.white,
               //accentColor: Colors.red,
               fontFamily: 'Lato',
+              pageTransitionsTheme: PageTransitionsTheme(
+                builders: {
+                  TargetPlatform.android: CustomTransition(),
+                  TargetPlatform.iOS: CustomTransition(),
+                }
+              ),
             ),
             home: authProv.authStatus
                 ? const ProductOverview()

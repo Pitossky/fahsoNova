@@ -99,7 +99,8 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
-class _AuthCardState extends State<AuthCard> {
+class _AuthCardState extends State<AuthCard>
+    with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthenticationMode _authMode = AuthenticationMode.logIn;
   final Map<String, String> _authData = {
@@ -108,6 +109,42 @@ class _AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+  AnimationController? _authScreenController;
+  Animation<Size>? _formBoxAnimation;
+  Animation<double>? _passwordAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _authScreenController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _formBoxAnimation = Tween<Size>(
+      begin: const Size(double.infinity, 260),
+      end: const Size(double.infinity, 320),
+    ).animate(
+      CurvedAnimation(
+        parent: _authScreenController!,
+        curve: Curves.fastOutSlowIn,
+      ),
+    );
+    _passwordAnimation = Tween(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(
+      CurvedAnimation(
+        parent: _authScreenController!,
+        curve: Curves.easeIn,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _authScreenController!.dispose();
+  }
 
   void _showErrorDialog(String message) {
     showDialog(
@@ -122,7 +159,6 @@ class _AuthCardState extends State<AuthCard> {
             },
             child: const Text('Okay'),
           ),
-
         ],
       ),
     );
@@ -178,10 +214,12 @@ class _AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthenticationMode.signUp;
       });
+      _authScreenController!.forward();
     } else {
       setState(() {
         _authMode = AuthenticationMode.logIn;
       });
+      _authScreenController!.reverse();
     }
   }
 
@@ -193,7 +231,9 @@ class _AuthCardState extends State<AuthCard> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       elevation: 8.0,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
         height: _authMode == AuthenticationMode.signUp ? 320 : 260,
         constraints: BoxConstraints(
           minHeight: _authMode == AuthenticationMode.signUp ? 320 : 260,
@@ -231,21 +271,31 @@ class _AuthCardState extends State<AuthCard> {
                     _authData['password'] = value!;
                   },
                 ),
-                if (_authMode == AuthenticationMode.signUp)
-                  TextFormField(
-                    enabled: _authMode == AuthenticationMode.signUp,
-                    decoration: const InputDecoration(
-                      labelText: 'Confirm Password',
-                    ),
-                    obscureText: true,
-                    validator: _authMode == AuthenticationMode.signUp
-                        ? (value) {
-                            if (value != _passwordController.text) {
-                              return 'Passwords do not match!';
-                            }
-                          }
-                        : null,
+                AnimatedContainer(
+                  constraints: BoxConstraints(
+                    minHeight: _authMode == AuthenticationMode.signUp ? 60 : 0,
+                    maxHeight: _authMode == AuthenticationMode.signUp ? 120 : 0,
                   ),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeIn,
+                  child: FadeTransition(
+                    opacity: _passwordAnimation!,
+                    child: TextFormField(
+                      enabled: _authMode == AuthenticationMode.signUp,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm Password',
+                      ),
+                      obscureText: true,
+                      validator: _authMode == AuthenticationMode.signUp
+                          ? (value) {
+                              if (value != _passwordController.text) {
+                                return 'Passwords do not match!';
+                              }
+                            }
+                          : null,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 if (_isLoading)
                   const CircularProgressIndicator()
